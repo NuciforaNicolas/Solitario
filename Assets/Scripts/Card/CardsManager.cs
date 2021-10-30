@@ -39,7 +39,7 @@ public class CardsManager : MonoBehaviour
             go.GetComponent<Stack>().insertCardToStack += InsertCardToStack;
         }
 
-        deckSlot.GetComponent<Deck>().drawACard += DrawACard;
+        deckSlot.GetComponent<Deck>().drawACard += DrawACardFromDeck;
     }
 
     // Start is called before the first frame update
@@ -49,7 +49,12 @@ public class CardsManager : MonoBehaviour
         // Shuffle cards using Fisher-Yates algorithm
         cardsPool.Shuffle<GameObject>();
         for (int i = 0; i < cardsPool.Count; i++)
-            deck.Push(Instantiate<GameObject>(cardsPool[i], deckSlot.position, deckSlot.rotation));
+        {
+            GameObject card = Instantiate<GameObject>(cardsPool[i], deckSlot.position, deckSlot.rotation);
+            //card.GetComponent<SpriteRenderer>().sortingOrder = i;
+            deck.Push(card); ;
+        }
+            
 
         StartCoroutine(DrawCards());
 
@@ -67,14 +72,20 @@ public class CardsManager : MonoBehaviour
         // Se lo stack counter + 1 == 1 allora va asso, se è 2 va la carta numero 2, e cosi via...
         if ((cardStack.GetComponent<Stack>().stackType.ToString() == cardComp.suit.ToString()) && ((stackCounters[cardStack.name] + 1) == cardComp.number))
         {
+            if (cardComp.GetLastSlot().tag.Equals("DrawDeck"))
+            {
+                Debug.Log("Inserendo la carta " + card.name + " pescata da DrawnDeck nello stack");
+                DrawACardFromDrawnDeck();
+            }
             cardStacks[cardStack.name].Add(card);
             stackCounters[cardStack.name]++;
+            card.GetComponent<SpriteRenderer>().sortingOrder = stackCounters[cardStack.name];
             cardComp.PutToStack();
             card.transform.position = cardStack.transform.position;
         }
     }
 
-    void DrawACard()
+    void DrawACardFromDeck()
     {
         if(!isSettingGame)
         {
@@ -87,10 +98,36 @@ public class CardsManager : MonoBehaviour
                 cardComp.FlipCard();
                 if(drawnCards.Count > 0)
                 {
-                    card.GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder + 1;
                     drawnCards.Peek().GetComponent<BoxCollider2D>().enabled = false;
                 }
                 drawnCards.Push(card);
+                drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Count;
+            }
+        }
+    }
+
+    public void PutAboveDranwStack(GameObject card)
+    {
+        if (drawnCards.Count > 0)
+        {
+            drawnCards.Peek().GetComponent<BoxCollider2D>().enabled = false;
+        }
+        drawnCards.Push(card);
+        drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Count;
+    }
+
+    public void DrawACardFromDrawnDeck()
+    {
+        if (!isSettingGame)
+        {
+            if (drawnCards.Count > 0)
+            {  
+                drawnCards.Pop();
+                if(drawnCards.Count >0 )
+                {
+                    drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Count;
+                    drawnCards.Peek().GetComponent<BoxCollider2D>().enabled = true;
+                }
             }
         }
     }
@@ -137,7 +174,7 @@ public class CardsManager : MonoBehaviour
                 {
                     //Flip the card
                     card.GetComponent<Card>().FlipCard();
-                    card.GetComponent<BoxCollider2D>().enabled = true;
+                    //card.GetComponent<BoxCollider2D>().enabled = true;
                 }
                 StartCoroutine(MoveCardAtPosition(card.transform, columnTransform));
                 lastSlotInColumns[j] = card.transform;

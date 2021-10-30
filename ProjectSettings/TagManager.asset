@@ -7,6 +7,7 @@ TagManager:
   - Card
   - Slot
   - Stack
+  - DrawDeck
   layers:
   - Default
   - TransparentFX
@@ -46,4 +47,7 @@ TagManager:
     locked: 0
   - name: Card
     uniqueID: 591156213
+    locked: 0
+  - name: DrawnCard
+    uniqueID: 4175716591
     locked: 0

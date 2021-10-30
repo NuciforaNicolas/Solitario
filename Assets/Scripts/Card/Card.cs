@@ -25,6 +25,10 @@ public class Card : MonoBehaviour
     SpriteRenderer spriteRenderer;
     BoxCollider2D boxCollider;
     [SerializeField] Transform cardToFlip;
+    [SerializeField] string drawnCardLayerName;
+    [SerializeField] string cardLayerName;
+
+    [SerializeField] Sprite faceSprite, backSprite;
 
     public bool isCovered;
     public bool hasCardAbove;
@@ -34,8 +38,10 @@ public class Card : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
         // Card is covered at the beginning
-        spriteRenderer.enabled = false;
+        spriteRenderer.sprite = backSprite;
         isCovered = true;
+        cardLayerName = "Card";
+        drawnCardLayerName = "DrawnCard";
 
         color = (suit == Suits.Heart || suit == Suits.Diamond) ? Color.Red : Color.Black;
 
@@ -62,14 +68,14 @@ public class Card : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag.Equals("Slot") && isDragging)
+        if (collision.tag.Equals("Slot") && isDragging)
         {
             SetLastSlot(collision.transform);
         }
         if(collision.tag.Equals("Card") && isDragging)
         {
             var slotGO = collision.GetComponent<Card>();
-            if(!slotGO.isCovered && (slotGO.color != color) && ((slotGO.number-1) == number))
+            if(!slotGO.isCovered && (slotGO.color != color) && ((slotGO.number-1) == number) /*&& !slotGO.GetLastSlot().tag.Equals("DrawnDeck")*/)
             {
                 SetLastSlot(collision.transform);
             }
@@ -82,13 +88,14 @@ public class Card : MonoBehaviour
         if(!isCovered)
         {
             isDragging = true;
-            //spriteRenderer.sortingOrder = 1;
+            spriteRenderer.sortingLayerName = drawnCardLayerName;
+            //spriteRenderer.sortingOrder--;
 
             if (transform.parent != null)
             {
                 transform.parent = null;
             }
-            if (lastSlot != null)
+            if (lastSlot != null && lastSlot.tag.Equals("Slot"))
             {
                /* if(lastSlot.tag.Equals("Card"))
                 {
@@ -106,11 +113,15 @@ public class Card : MonoBehaviour
             Vector2 newPos = lastSlot.position;
             if (lastSlot.tag.Equals("Card"))
             {
-                newPos = new Vector2(lastSlot.position.x, lastSlot.position.y - offset);
+                newPos = new Vector3(lastSlot.position.x, lastSlot.position.y - offset);
                 transform.parent = lastSlot;
             }
-            else{
+            else if(lastSlot.tag.Equals("Slot")){
                 lastSlot.GetComponent<BoxCollider2D>().enabled = false;
+            }
+            else if(lastSlot.tag.Equals("DrawnDeck"))
+            {
+                CardsManager.instance.PutAboveDranwStack(gameObject);
             }
             transform.position = newPos;
             PutAboveLastSlot();
@@ -130,25 +141,39 @@ public class Card : MonoBehaviour
             spriteRenderer.sortingOrder = lastSlot.GetComponent<SpriteRenderer>().sortingOrder + 1;
             //lastSlot.GetComponent<Card>().hasCardAbove = true;
         }
+        spriteRenderer.sortingLayerName = cardLayerName;
     }
 
     public void SetLastSlot(Transform slot)
     {
-        if(lastSlot != null && lastSlot.tag.Equals("Card") && lastSlot.GetComponent<Card>().isCovered)
+        if (lastSlot != null && lastSlot.tag.Equals("DrawDeck"))
+        {
+            Debug.Log("Inserendo la carta " + name + " pescata da DrawnDeck sopra la carta " + slot.name);
+            CardsManager.instance.DrawACardFromDrawnDeck();
+        }
+        else if(lastSlot != null && lastSlot.tag.Equals("Card") && lastSlot.GetComponent<Card>().isCovered)
         {
             cardToFlip = lastSlot;
         }
+
         lastSlot = slot;
+    }
+
+    public Transform GetLastSlot()
+    {
+        return lastSlot;
     }
 
     public void FlipCard()
     {
-        if(!boxCollider.enabled)
+        /*if(!boxCollider.enabled)
         {
             boxCollider.enabled = true;
-        }
-        transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-        transform.GetComponent<SpriteRenderer>().enabled = true;
+        }*/
+        boxCollider.enabled = true;
+        //transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+        //transform.GetComponent<SpriteRenderer>().enabled = true;
+        transform.GetComponent<SpriteRenderer>().sprite = faceSprite;
         transform.GetComponent<Card>().isCovered = false;
         Debug.Log("Ho scoperto la carta: " + name);
     }
@@ -157,10 +182,14 @@ public class Card : MonoBehaviour
     {
         isDragging = false;
         boxCollider.enabled = false;
-        spriteRenderer.sortingOrder = 0;
+        spriteRenderer.sortingLayerName = cardLayerName;
         if(lastSlot != null && lastSlot.tag.Equals("Card") && lastSlot.GetComponent<Card>().isCovered)
         {
             lastSlot.GetComponent<Card>().FlipCard();
+        }
+        if(cardToFlip != null)
+        {
+            cardToFlip.GetComponent<Card>().FlipCard();
         }
     }
 }

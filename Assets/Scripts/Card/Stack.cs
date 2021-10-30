@@ -16,7 +16,7 @@ public class Stack : MonoBehaviour
     {
         if (CardsManager.instance.isSettingGame) return;
 
-        if(collision.tag.Equals("Card"))
+        if(collision.tag.Equals("Card") && collision.transform.parent == null)
         {
             insertCardToStack?.Invoke(gameObject, collision.gameObject);
         }
