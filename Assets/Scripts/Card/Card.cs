@@ -75,7 +75,7 @@ public class Card : MonoBehaviour
         if(collision.tag.Equals("Card") && isDragging)
         {
             var slotGO = collision.GetComponent<Card>();
-            if(!slotGO.isCovered && (slotGO.color != color) && ((slotGO.number-1) == number) /*&& !slotGO.GetLastSlot().tag.Equals("DrawnDeck")*/)
+            if((!slotGO.isCovered) && (slotGO.color != color) && ((slotGO.number-1) == number) && (!slotGO.GetLastSlot().tag.Equals("DrawDeck")))
             {
                 SetLastSlot(collision.transform);
             }

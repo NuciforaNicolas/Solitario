@@ -10,7 +10,7 @@ public class CardsManager : MonoBehaviour
     [SerializeField] Dictionary<string, List<GameObject>> cardStacks;
     [SerializeField] Dictionary<string, int> stackCounters;
     Stack<GameObject> deck, drawnCards;
-    [SerializeField] float timeToMoveCard, timeNextDraw;
+    [SerializeField] float timeToMoveCard, timeNextDraw, maxCardsPerStack;
     [SerializeField] Transform deckSlot, drawSlot;
     float timer;
     public bool isSettingGame { get; private set; }
@@ -82,6 +82,10 @@ public class CardsManager : MonoBehaviour
             card.GetComponent<SpriteRenderer>().sortingOrder = stackCounters[cardStack.name];
             cardComp.PutToStack();
             card.transform.position = cardStack.transform.position;
+            if(stackCounters[cardStack.name] >= maxCardsPerStack)
+            {
+                GameManager.instance.IncreaseStacksCompletedCounter();
+            }
         }
     }
 
