@@ -10,9 +10,11 @@ public class GameManager : MonoBehaviour
     int stacksCompleted;
     [SerializeField] int totalStacks;
     [SerializeField] Text timerUI, movesUI, pointsUI;
-    float timer, day;
+    float timer;
     int moves, points;
     bool isPlaying;
+
+    public bool hasWon;
 
     // Start is called before the first frame update
     void Awake()
@@ -20,7 +22,6 @@ public class GameManager : MonoBehaviour
         instance = this;
         stacksCompleted = 0;
         timer = 0;
-        day = 0;
         moves = 0;
         points = 0;
     }
@@ -28,17 +29,22 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         isPlaying = true;
+        hasWon = false;
+        Time.timeScale = 1;
     }
 
     private void Update()
     {
         if(isPlaying)
         {
-            if (stacksCompleted >= totalStacks)
+            // Se il numero di stack dei semi completi è pari a 4, allora il giocatore ha vinto
+            if (stacksCompleted >= totalStacks || hasWon)
             {
-                Debug.Log("You Won");
+                UIManager.instance.OpenVictory();
+                Time.timeScale = 0;
             }
 
+            // Incrementa il timer
             if(timerUI != null && !CardsManager.instance.isSettingGame)
             {
                 timer += Time.deltaTime;
@@ -49,6 +55,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Incrementa il numero degli stack completati
     public void IncreaseStacksCompletedCounter()
     {
         stacksCompleted++;
@@ -67,6 +74,7 @@ public class GameManager : MonoBehaviour
 
     public void ReloadMatch()
     {
+        //Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -84,5 +92,20 @@ public class GameManager : MonoBehaviour
     {
         points += 5;
         pointsUI.text = points.ToString();
+    }
+
+    public int GetPoints()
+    {
+        return points;
+    }
+
+    public int GetMoves()
+    {
+        return moves;
+    }
+
+    public string GetTimer()
+    {
+        return timerUI.text;
     }
 }

@@ -51,6 +51,7 @@ public class Card : MonoBehaviour
 
     private void Update()
     {
+        // Drag and drop delle carte
         if(isDragging && !CardsManager.instance.isSettingGame)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
@@ -58,14 +59,19 @@ public class Card : MonoBehaviour
         }
     }
 
+    // Controlla se la carta pescata finisce al di sopra di un'altra
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // Se la carta è un re ed è al di sopra di una colonna libera, è possibile posizionarla di sopra (tutte le altre non possono)
         if (collision.tag.Equals("Slot") && number == 13 && isDragging)
         {
             SetLastSlot(collision.transform);
         }
+        // Se si trova al di sopra di un'altra carta...
         if(collision.tag.Equals("Card") && isDragging)
         {
+            // ... e non è coperta, di colore diverso e di un numero superiore, allora è possibile posizionarla di sopra
+            // Controllo se è diverso da DrawDeck (pila di carte pescate) per impedire alla carta di essere posizionata al di sopra di una carta nella pila
             var slotGO = collision.GetComponent<Card>();
             if((!slotGO.isCovered) && (slotGO.color != color) && ((slotGO.number-1) == number) && (!slotGO.GetLastSlot().tag.Equals("DrawDeck")))
             {
@@ -80,6 +86,7 @@ public class Card : MonoBehaviour
         }
     }
 
+    // Inizia a trascinare la carta
     private void OnMouseDown()
     {
 
@@ -89,10 +96,12 @@ public class Card : MonoBehaviour
             spriteRenderer.sortingLayerName = drawnCardLayerName;
             //spriteRenderer.sortingOrder--;
 
+            // Scollego la carta dalle altre (nel caso in cui la carta è gia all0interno di una pila di carte ordinate)
             if (transform.parent != null)
             {
                 transform.parent = null;
             }
+            // Se la carta si trova nel primo slot della colonna riattiva il trigger dello slot
             if (lastSlot != null && lastSlot.tag.Equals("Slot"))
             {
                 lastSlot.GetComponent<BoxCollider2D>().enabled = true;
@@ -100,11 +109,13 @@ public class Card : MonoBehaviour
         }
     }
 
+    // Posa la carta che si stava trascinando
     private void OnMouseUp()
     {
         if (lastSlot != null && isDragging)
         {
             Vector2 newPos = lastSlot.position;
+            // Setta la nuova posizione della carta. Se deve essere posizionata al di sopra di un'altra carta, abbassala di un certo offset
             if (lastSlot.tag.Equals("Card"))
             {
                 newPos = new Vector3(lastSlot.position.x, lastSlot.position.y - offset);
@@ -115,15 +126,19 @@ public class Card : MonoBehaviour
                     increasePoint = false;
                 }
             }
+            // Se è uno slot, disattiva il trigger per impedire di posizionarci altre carte
             else if(lastSlot.tag.Equals("Slot")){
                 lastSlot.GetComponent<BoxCollider2D>().enabled = false;
             }
+            // Riposiziona la carta nella pila delle carte pescate (avviene se si rilascia il dito e non è stato trovato un nuovo slot)
             else if(lastSlot.tag.Equals("DrawnDeck"))
             {
                 CardsManager.instance.PutAboveDranwStack(gameObject);
             }
+            // Setta la posizione dell'ultimo slot trovato
             transform.position = newPos;
             PutAboveLastSlot();
+            // Se una carta coperta si trova libera dopo aver posizionato la carta selezionata, girala
             if(cardToFlip != null)
             {
                 cardToFlip.GetComponent<Card>().FlipCard();
@@ -134,16 +149,18 @@ public class Card : MonoBehaviour
         isDragging = false;
     }
 
+    // Posiziona la carta al di sopra di un'altra incrementando il sortingOrder
     public void PutAboveLastSlot()
     {
-        if(lastSlot.tag.Equals("Card"))
+        spriteRenderer.sortingLayerName = cardLayerName;
+        if (lastSlot.tag.Equals("Card"))
         {
             spriteRenderer.sortingOrder = lastSlot.GetComponent<SpriteRenderer>().sortingOrder + 1;
             //lastSlot.GetComponent<Card>().hasCardAbove = true;
         }
-        spriteRenderer.sortingLayerName = cardLayerName;
     }
 
+    // Setta l'ultimo slot eleggibile
     public void SetLastSlot(Transform slot)
     {
         if (lastSlot != null && lastSlot.tag.Equals("DrawDeck"))
@@ -151,6 +168,7 @@ public class Card : MonoBehaviour
             Debug.Log("Inserendo la carta " + name + " pescata da DrawnDeck sopra la carta " + slot.name);
             CardsManager.instance.DrawACardFromDrawnDeck();
         }
+        // Prima di cambiare slot, controlla se al di sotto si ha una carta coperta. se si, bisogna girarla
         else if(lastSlot != null && lastSlot.tag.Equals("Card") && lastSlot.GetComponent<Card>().isCovered)
         {
             cardToFlip = lastSlot;
@@ -164,6 +182,7 @@ public class Card : MonoBehaviour
         return lastSlot;
     }
 
+    // Gira la carta coperta
     public void FlipCard()
     {
         /*if(!boxCollider.enabled)
@@ -178,6 +197,7 @@ public class Card : MonoBehaviour
         Debug.Log("Ho scoperto la carta: " + name);
     }
 
+    // Posiziona la carta nello stack dei semi
     public void PutToStack()
     {
         isDragging = false;

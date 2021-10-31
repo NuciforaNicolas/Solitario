@@ -54,16 +54,8 @@ public class CardsManager : MonoBehaviour
             //card.GetComponent<SpriteRenderer>().sortingOrder = i;
             deck.Push(card); ;
         }
-            
-
+         
         StartCoroutine(DrawCards());
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     void InsertCardToStack(GameObject cardStack, GameObject card)

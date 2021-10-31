@@ -12,6 +12,7 @@ public class Stack : MonoBehaviour
     }
     public StackType stackType;
 
+    // Notifica CardManager che una carta si trova al di sopra dello stack
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (CardsManager.instance.isSettingGame) return;
