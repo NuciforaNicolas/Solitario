@@ -82,6 +82,8 @@ public class CardsManager : MonoBehaviour
             card.GetComponent<SpriteRenderer>().sortingOrder = stackCounters[cardStack.name];
             cardComp.PutToStack();
             card.transform.position = cardStack.transform.position;
+            GameManager.instance.IncreasePoints();
+            GameManager.instance.IncreaseMoves();
             if(stackCounters[cardStack.name] >= maxCardsPerStack)
             {
                 GameManager.instance.IncreaseStacksCompletedCounter();

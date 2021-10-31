@@ -30,8 +30,7 @@ public class Card : MonoBehaviour
 
     [SerializeField] Sprite faceSprite, backSprite;
 
-    public bool isCovered;
-    public bool hasCardAbove;
+    public bool isCovered, canIncreasePoint, increasePoint;
 
     private void Awake()
     {
@@ -40,6 +39,8 @@ public class Card : MonoBehaviour
         // Card is covered at the beginning
         spriteRenderer.sprite = backSprite;
         isCovered = true;
+        canIncreasePoint = true;
+        increasePoint = false;
         cardLayerName = "Card";
         drawnCardLayerName = "DrawnCard";
 
@@ -57,15 +58,6 @@ public class Card : MonoBehaviour
         }
     }
 
-    public void SetHasCardAbove(bool val)
-    {
-        hasCardAbove = val;
-    }
-    public bool GetHasCardAbove()
-    {
-        return hasCardAbove;
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag.Equals("Slot") && isDragging)
@@ -77,6 +69,12 @@ public class Card : MonoBehaviour
             var slotGO = collision.GetComponent<Card>();
             if((!slotGO.isCovered) && (slotGO.color != color) && ((slotGO.number-1) == number) && (!slotGO.GetLastSlot().tag.Equals("DrawDeck")))
             {
+                // Per ogni carta, l'incremento del punteggio avviene una sola volta per spostamento corretto
+                if(canIncreasePoint)
+                {
+                    increasePoint = true;
+                    canIncreasePoint = false;
+                }
                 SetLastSlot(collision.transform);
             }
         }
@@ -97,10 +95,6 @@ public class Card : MonoBehaviour
             }
             if (lastSlot != null && lastSlot.tag.Equals("Slot"))
             {
-               /* if(lastSlot.tag.Equals("Card"))
-                {
-                    lastSlot.GetComponent<Card>().hasCardAbove = false;
-                }*/
                 lastSlot.GetComponent<BoxCollider2D>().enabled = true;
             }
         }
@@ -115,6 +109,11 @@ public class Card : MonoBehaviour
             {
                 newPos = new Vector3(lastSlot.position.x, lastSlot.position.y - offset);
                 transform.parent = lastSlot;
+                if (increasePoint)
+                {
+                    GameManager.instance.IncreasePoints();
+                    increasePoint = false;
+                }
             }
             else if(lastSlot.tag.Equals("Slot")){
                 lastSlot.GetComponent<BoxCollider2D>().enabled = false;
@@ -130,6 +129,7 @@ public class Card : MonoBehaviour
                 cardToFlip.GetComponent<Card>().FlipCard();
                 cardToFlip = null;
             }
+            GameManager.instance.IncreaseMoves();
         }
         isDragging = false;
     }
