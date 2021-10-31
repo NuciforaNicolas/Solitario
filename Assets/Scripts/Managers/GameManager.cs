@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
         day = 0;
         moves = 0;
         points = 0;
-        DontDestroyOnLoad(this.gameObject);
     }
 
     private void Start()

@@ -60,7 +60,7 @@ public class Card : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag.Equals("Slot") && isDragging)
+        if (collision.tag.Equals("Slot") && number == 13 && isDragging)
         {
             SetLastSlot(collision.transform);
         }
