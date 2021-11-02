@@ -149,14 +149,41 @@ public class Card : MonoBehaviour
         isDragging = false;
     }
 
-    // Posiziona la carta al di sopra di un'altra incrementando il sortingOrder
+    // Posiziona la carta selezionata al di sopra di un'altra carta scoperta incrementando il sortingOrder
     public void PutAboveLastSlot()
     {
         spriteRenderer.sortingLayerName = cardLayerName;
         if (lastSlot.tag.Equals("Card"))
         {
             spriteRenderer.sortingOrder = lastSlot.GetComponent<SpriteRenderer>().sortingOrder + 1;
-            //lastSlot.GetComponent<Card>().hasCardAbove = true;
+            // Se la carta trascinata contiene altre carte figlie (ovvero stiamo spostando una pila di carte) allora aggiorna il sorting order di esse
+            if(transform.childCount > 0)
+            {
+                UpdateSortingOrderOfChildCards(transform);
+            }
+            
+        }
+    }
+
+    // Aggiorna il sorting order dell'intera pila spostata
+    void UpdateSortingOrderOfChildCards(Transform card)
+    {
+        int order = card.GetComponent<SpriteRenderer>().sortingOrder;
+        Transform childCard = card.GetChild(0);
+
+        // Itera tutte le carte figlie per aggiornare il sorting older
+        while (childCard != null)
+        {
+            childCard.GetComponent<SpriteRenderer>().sortingOrder = (++order);
+            // Prendi la carta figlia della carta figlia, e cosi via...
+            if (childCard.childCount > 0)
+            {
+                childCard = childCard.GetChild(0);
+            }
+            else
+            {
+                childCard = null;
+            }
         }
     }
 
