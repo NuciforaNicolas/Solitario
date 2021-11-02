@@ -190,9 +190,15 @@ public class Card : MonoBehaviour
     // Setta l'ultimo slot eleggibile
     public void SetLastSlot(Transform slot)
     {
+        if (slot == null)
+        {
+            lastSlot = null;
+            return;
+        }
+
         if (lastSlot != null && lastSlot.tag.Equals("DrawDeck"))
         {
-            Debug.Log("Inserendo la carta " + name + " pescata da DrawnDeck sopra la carta " + slot.name);
+            //Debug.Log("Inserendo la carta " + name + " pescata da DrawnDeck sopra la carta " + slot.name);
             CardsManager.instance.DrawACardFromDrawnDeck();
         }
         // Prima di cambiare slot, controlla se al di sotto si ha una carta coperta. se si, bisogna girarla
@@ -209,19 +215,21 @@ public class Card : MonoBehaviour
         return lastSlot;
     }
 
-    // Gira la carta coperta
+    // Scopri la carta
     public void FlipCard()
     {
-        /*if(!boxCollider.enabled)
-        {
-            boxCollider.enabled = true;
-        }*/
         boxCollider.enabled = true;
-        //transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-        //transform.GetComponent<SpriteRenderer>().enabled = true;
-        transform.GetComponent<SpriteRenderer>().sprite = faceSprite;
-        transform.GetComponent<Card>().isCovered = false;
+        spriteRenderer.sprite = faceSprite;
+        isCovered = false;
         Debug.Log("Ho scoperto la carta: " + name);
+    }
+
+    // Copri la carta
+    public void CoverCard()
+    {
+        boxCollider.enabled = false;
+        spriteRenderer.sprite = backSprite;
+        isCovered = true;
     }
 
     // Posiziona la carta nello stack dei semi

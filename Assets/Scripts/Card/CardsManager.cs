@@ -9,7 +9,7 @@ public class CardsManager : MonoBehaviour
     [SerializeField] Dictionary<int, Transform> lastSlotInColumns;
     [SerializeField] Dictionary<string, List<GameObject>> cardStacks;
     [SerializeField] Dictionary<string, int> stackCounters;
-    Stack<GameObject> deck, drawnCards;
+    [SerializeField] Stack<GameObject> deck, drawnCards;
     [SerializeField] float timeToMoveCard, timeNextDraw, maxCardsPerStack;
     [SerializeField] Transform deckSlot, drawSlot;
     float timer;
@@ -52,7 +52,7 @@ public class CardsManager : MonoBehaviour
         {
             GameObject card = Instantiate<GameObject>(cardsPool[i], deckSlot.position, deckSlot.rotation);
             //card.GetComponent<SpriteRenderer>().sortingOrder = i;
-            deck.Push(card); ;
+            deck.Push(card);
         }
          
         StartCoroutine(DrawCards());
@@ -100,6 +100,28 @@ public class CardsManager : MonoBehaviour
                 }
                 drawnCards.Push(card);
                 drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Count;
+            }
+            else
+            {
+                // Se le carte nel deck sono terminate, posso rimetterle al posto e ripescarle
+                ResetDeck();
+            }
+        }
+    }
+
+    // Rimetti a posto tutte le carte pescate
+    void ResetDeck()
+    {
+        if(!isSettingGame)
+        {
+            while(drawnCards.Count > 0)
+            {
+                GameObject card = drawnCards.Pop();
+                card.transform.position = deckSlot.transform.position;
+                card.GetComponent<Card>().CoverCard();
+                card.GetComponent<Card>().SetLastSlot(null);
+                deck.Push(card);
+                deck.Peek().GetComponent<SpriteRenderer>().sortingOrder = deck.Count;
             }
         }
     }

@@ -3109,7 +3109,9 @@ MonoBehaviour:
     un'altra carta, fino a quando la colonna resta vuota e quando ve ne \xE8 1 completamente
     vuota per poter cominciare una nuova colonna vi potrai mettere soltanto un Re
     (o un gruppo di carte con un Re in cima).\r\n\nQuando non \xE8 pi\xF9 possibile
-    spostare le carte nelle colonne si vanno a vedere le carte rimaste nello stock."
+    spostare le carte nelle colonne si vanno a vedere le carte rimaste nello stock.\n\nSe
+    anche le carte nello stock sono terminate, \xE8 possibile rimetterle a posto
+    per poterle ripescarle"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
