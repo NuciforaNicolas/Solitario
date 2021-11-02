@@ -72,8 +72,9 @@ public class Card : MonoBehaviour
         {
             // ... e non è coperta, di colore diverso e di un numero superiore, allora è possibile posizionarla di sopra
             // Controllo se è diverso da DrawDeck (pila di carte pescate) per impedire alla carta di essere posizionata al di sopra di una carta nella pila
+            // inoltre, controllo se la carta scoperta su cui vogliamo posizionarla non abbia carte figlie (ovvero, è scoperta e non ha una pila al di sotto)
             var slotGO = collision.GetComponent<Card>();
-            if((!slotGO.isCovered) && (slotGO.color != color) && ((slotGO.number-1) == number) && (!slotGO.GetLastSlot().tag.Equals("DrawDeck")))
+            if((collision.transform.childCount == 0) && (!slotGO.isCovered) && (slotGO.color != color) && ((slotGO.number-1) == number) && (!slotGO.GetLastSlot().tag.Equals("DrawDeck")))
             {
                 // Per ogni carta, l'incremento del punteggio avviene una sola volta per spostamento corretto
                 if(canIncreasePoint)
