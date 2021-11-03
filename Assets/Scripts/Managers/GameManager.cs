@@ -62,6 +62,11 @@ public class GameManager : MonoBehaviour
         Debug.Log("Stacks completed: " + stacksCompleted);
     }
 
+    public void DecreaseStackCompletedCounter()
+    {
+        stacksCompleted--;
+    }
+
     public void StartGame()
     {
         SceneManager.LoadScene(1);
@@ -88,9 +93,9 @@ public class GameManager : MonoBehaviour
         movesUI.text = (++moves).ToString();
     }
 
-    public void IncreasePoints()
+    public void IncreasePoints(int _points)
     {
-        points += 5;
+        points += _points;
         pointsUI.text = points.ToString();
     }
 

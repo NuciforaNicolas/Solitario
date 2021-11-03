@@ -82,6 +82,15 @@ public class Card : MonoBehaviour
                     increasePoint = true;
                     canIncreasePoint = false;
                 }
+                // Prima di cambiare slot, controlla se al di sotto si ha una carta coperta. se si, bisogna girarla
+                if (lastSlot != null && lastSlot.tag.Equals("Card") && lastSlot.GetComponent<Card>().isCovered)
+                {
+                    cardToFlip = lastSlot;
+                }
+
+                // Registra lo stato corrente della carta prima di cambiare lastSlot
+                HistoryManager.instance.RegisterMoveToHistory(transform, lastSlot, false, false,  (cardToFlip != null ? cardToFlip.GetComponent<Card>() : null), null);
+
                 SetLastSlot(collision.transform);
             }
         }
@@ -107,47 +116,60 @@ public class Card : MonoBehaviour
             {
                 lastSlot.GetComponent<BoxCollider2D>().enabled = true;
             }
+            else if (lastSlot != null && lastSlot.tag.Equals("DrawDeck"))
+            {
+                //Debug.Log("Inserendo la carta " + name + " pescata da DrawnDeck sopra la carta " + slot.name);
+                CardsManager.instance.DrawACardFromDrawnDeck();
+            }
         }
     }
 
     // Posa la carta che si stava trascinando
-    private void OnMouseUp()
+    public void OnMouseUp()
     {
         if (lastSlot != null && isDragging)
         {
-            Vector2 newPos = lastSlot.position;
-            // Setta la nuova posizione della carta. Se deve essere posizionata al di sopra di un'altra carta, abbassala di un certo offset
-            if (lastSlot.tag.Equals("Card"))
-            {
-                newPos = new Vector3(lastSlot.position.x, lastSlot.position.y - offset);
-                transform.parent = lastSlot;
-                if (increasePoint)
-                {
-                    GameManager.instance.IncreasePoints();
-                    increasePoint = false;
-                }
-            }
-            // Se è uno slot, disattiva il trigger per impedire di posizionarci altre carte
-            else if(lastSlot.tag.Equals("Slot")){
-                lastSlot.GetComponent<BoxCollider2D>().enabled = false;
-            }
-            // Riposiziona la carta nella pila delle carte pescate (avviene se si rilascia il dito e non è stato trovato un nuovo slot)
-            else if(lastSlot.tag.Equals("DrawnDeck"))
-            {
-                CardsManager.instance.PutAboveDranwStack(gameObject);
-            }
-            // Setta la posizione dell'ultimo slot trovato
-            transform.position = newPos;
-            PutAboveLastSlot();
-            // Se una carta coperta si trova libera dopo aver posizionato la carta selezionata, girala
-            if(cardToFlip != null)
-            {
-                cardToFlip.GetComponent<Card>().FlipCard();
-                cardToFlip = null;
-            }
+            MoveCardToLastSlot();   
             GameManager.instance.IncreaseMoves();
+            //Registra l'ultimo spostamento da colonna a colonna
         }
         isDragging = false;
+    }
+
+    public void MoveCardToLastSlot()
+    {
+        Vector2 newPos = lastSlot.position;
+        transform.parent = lastSlot;
+        // Setta la nuova posizione della carta. Se deve essere posizionata al di sopra di un'altra carta, abbassala di un certo offset
+        if (lastSlot.tag.Equals("Card"))
+        {
+            newPos = new Vector3(lastSlot.position.x, lastSlot.position.y - offset);
+
+            if (increasePoint)
+            {
+                GameManager.instance.IncreasePoints(5);
+                increasePoint = false;
+            }
+        }
+        // Se è uno slot, disattiva il trigger per impedire di posizionarci altre carte
+        else if (lastSlot.tag.Equals("Slot"))
+        {
+            lastSlot.GetComponent<BoxCollider2D>().enabled = false;
+        }
+        // Riposiziona la carta nella pila delle carte pescate (avviene se si rilascia il dito e non è stato trovato un nuovo slot)
+        else if (lastSlot.tag.Equals("DrawDeck"))
+        {
+            CardsManager.instance.PutAboveDranwStack(gameObject);
+        }
+        // Setta la posizione dell'ultimo slot trovato
+        transform.position = newPos;
+        PutAboveLastSlot();
+        // Se una carta coperta si trova libera dopo aver posizionato la carta selezionata, girala
+        if (cardToFlip != null)
+        {
+            cardToFlip.GetComponent<Card>().FlipCard();
+            cardToFlip = null;
+        }
     }
 
     // Posiziona la carta selezionata al di sopra di un'altra carta scoperta incrementando il sortingOrder
@@ -197,17 +219,6 @@ public class Card : MonoBehaviour
             return;
         }
 
-        if (lastSlot != null && lastSlot.tag.Equals("DrawDeck"))
-        {
-            //Debug.Log("Inserendo la carta " + name + " pescata da DrawnDeck sopra la carta " + slot.name);
-            CardsManager.instance.DrawACardFromDrawnDeck();
-        }
-        // Prima di cambiare slot, controlla se al di sotto si ha una carta coperta. se si, bisogna girarla
-        else if(lastSlot != null && lastSlot.tag.Equals("Card") && lastSlot.GetComponent<Card>().isCovered)
-        {
-            cardToFlip = lastSlot;
-        }
-
         lastSlot = slot;
     }
 
@@ -243,9 +254,9 @@ public class Card : MonoBehaviour
         {
             lastSlot.GetComponent<Card>().FlipCard();
         }
-        if(cardToFlip != null)
+        /*if(cardToFlip != null)
         {
             cardToFlip.GetComponent<Card>().FlipCard();
-        }
+        }*/
     }
 }
