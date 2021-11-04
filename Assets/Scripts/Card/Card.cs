@@ -80,13 +80,6 @@ public class Card : MonoBehaviour
                 var slotGO = collision.GetComponent<Card>();
                 if ((collision.transform.childCount == 0) && (!slotGO.isCovered) && (slotGO.color != color) && ((slotGO.number - 1) == number) && (!slotGO.GetLastSlot().tag.Equals("DrawDeck")))
                 {
-                    // Per ogni carta, l'incremento del punteggio avviene una sola volta per spostamento corretto
-                    if (canIncreasePoint)
-                    {
-                        increasePoint = true;
-                        canIncreasePoint = false;
-                    }
-
                     CheckCardToFlip();
 
                     SetLastSlot(collision.transform);
@@ -118,6 +111,12 @@ public class Card : MonoBehaviour
             else if (lastSlot != null && lastSlot.tag.Equals("DrawDeck"))
             {
                 //Debug.Log("Inserendo la carta " + name + " pescata da DrawnDeck sopra la carta " + slot.name);
+                // Se la carta viene spostata dal drawDeck ad una colonna, è possibile incrementare il punteggio
+                if (canIncreasePoint)
+                {
+                    increasePoint = true;
+                    canIncreasePoint = false;
+                }
                 CardsManager.instance.DrawACardFromDrawnDeck();
             }
         }
@@ -143,6 +142,7 @@ public class Card : MonoBehaviour
         {
             newPos = new Vector3(lastSlot.position.x, lastSlot.position.y - offset);
 
+            // Incrementa il punteggio se la carta è stata spostata dal drawDeck ad una colonna
             if (increasePoint)
             {
                 GameManager.instance.IncreasePoints(5);
@@ -157,6 +157,9 @@ public class Card : MonoBehaviour
         // Riposiziona la carta nella pila delle carte pescate (avviene se si rilascia il dito e non è stato trovato un nuovo slot)
         else if (lastSlot.tag.Equals("DrawDeck"))
         {
+            // Rimetti a false, in quanto la carta è tornata nel drawDeck
+            canIncreasePoint = false;
+            increasePoint = true;
             CardsManager.instance.PutAboveDranwStack(gameObject);
         }
         // Setta la posizione dell'ultimo slot trovato
@@ -247,6 +250,11 @@ public class Card : MonoBehaviour
         spriteRenderer.sprite = faceSprite;
         isCovered = false;
         Debug.Log("Ho scoperto la carta: " + name);
+        // Incremento il punteggio se scopro una carta ma solo se non sto settando l'inizio della partita e se non è stata pescata dal deck
+        if(!CardsManager.instance.isSettingGame && !lastSlot.tag.Equals("DrawDeck"))
+        {
+            GameManager.instance.IncreasePoints(5);
+        }
     }
 
     // Copri la carta

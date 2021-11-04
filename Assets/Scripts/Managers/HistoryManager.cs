@@ -57,11 +57,20 @@ public class HistoryManager : MonoBehaviour
                 {
                     lastInfo.card.GetComponent<BoxCollider2D>().enabled = true;
                     CardsManager.instance.RemoveFromStack(lastInfo.stackName);
+                    // Decrementa il punteggio se si toglie una carta dallo stack dei semi con un undo
+                    GameManager.instance.IncreasePoints(-10);
                 }
                 // Se è stata scoperta una carta precedentemente, bisogna ricoprirla
                 if(lastInfo.cardToCover != null)
                 {
                     lastInfo.cardToCover.GetComponent<Card>().CoverCard();
+                    // Decrementa il punteggio se si ricopre una carta con un undo
+                    GameManager.instance.IncreasePoints(-5);
+                }
+                if(lastInfo.lastPos.tag.Equals("DrawDeck") && !lastInfo.fromSuitStack)
+                {
+                    // Decrementa il punteggio se si rimette una carta dalla colonna nel drawDeck con un undo
+                    GameManager.instance.IncreasePoints(-5);
                 }
             }
             // Rimetti nel mazzo la carta pescata

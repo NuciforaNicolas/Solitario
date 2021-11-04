@@ -126,7 +126,12 @@ public class CardsManager : MonoBehaviour
                 // Se le carte nel deck sono terminate, posso rimetterle al posto e ripescarle
                 ResetDeck();
             }
-            GameManager.instance.IncreaseMoves();
+
+            // Incrementare il numero di mosse solamente se non si sta facendo l'undo del reset del deck
+            if(!HistoryManager.instance.isUndoResetDeck)
+            {
+                GameManager.instance.IncreaseMoves();
+            }
         }
     }
 
