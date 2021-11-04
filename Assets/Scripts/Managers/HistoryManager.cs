@@ -39,6 +39,8 @@ public class HistoryManager : MonoBehaviour
         newInfo.resetDeck = resetDeck;
 
         history.Push(newInfo);
+
+        Debug.Log("History counter: " + history.Count);
     }
 
     public void Undo()
@@ -90,7 +92,6 @@ public class HistoryManager : MonoBehaviour
     void UndoResetDeck()
     {
         isUndoResetDeck = true;
-        CardsManager.instance.ResetDrawStack();
-        isUndoResetDeck = false;
+        StartCoroutine(CardsManager.instance.ResetDrawStack());
     }
 }

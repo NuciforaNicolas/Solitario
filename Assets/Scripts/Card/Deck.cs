@@ -10,6 +10,10 @@ public class Deck : MonoBehaviour
     // Notifica il Cardmanager che il giocatore vuole pescare una carta
     private void OnMouseUp()
     {
-        drawACard?.Invoke();
+        // Se il gioco sta resettando il deck oppure sta facendo l'undo del reset del deck, allora bisogna attendere prima di poter pescare una carta
+        if(!CardsManager.instance.isResettingDeck && !HistoryManager.instance.isUndoResetDeck)
+        {
+            drawACard?.Invoke();
+        }
     }
 }

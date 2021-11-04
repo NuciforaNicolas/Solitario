@@ -10,11 +10,12 @@ public class CardsManager : MonoBehaviour
     //[SerializeField] Dictionary<string, List<GameObject>> cardStacks;
     [SerializeField] Dictionary<string, int> stackCounters;
     [SerializeField] Stack<GameObject> deck, drawnCards;
-    [SerializeField] float timeToMoveCard, timeNextDraw, maxCardsPerStack;
+    [SerializeField] float timeToMoveCard, timeNextDrawInit, timeNextDraw, maxCardsPerStack, offSet;
     [SerializeField] Transform deckSlot, drawSlot;
 
     float timer;
     public bool isSettingGame { get; private set; }
+    public bool isResettingDeck { get; private set; }
 
     public static CardsManager instance;
 
@@ -52,7 +53,7 @@ public class CardsManager : MonoBehaviour
         for (int i = 0; i < cardsPool.Count; i++)
         {
             GameObject card = Instantiate<GameObject>(cardsPool[i], deckSlot.position, deckSlot.rotation);
-            //card.GetComponent<SpriteRenderer>().sortingOrder = i;
+            card.GetComponent<SpriteRenderer>().sortingOrder = i + 1;
             deck.Push(card);
         }
          
@@ -77,13 +78,14 @@ public class CardsManager : MonoBehaviour
             stackCounters[cardStack.name]++;
             card.GetComponent<SpriteRenderer>().sortingOrder = stackCounters[cardStack.name];
             cardComp.PutToStack();
-            card.transform.position = cardStack.transform.position;
             GameManager.instance.IncreasePoints(10);
             GameManager.instance.IncreaseMoves();
-            if(stackCounters[cardStack.name] >= maxCardsPerStack)
+            if (stackCounters[cardStack.name] >= maxCardsPerStack)
             {
                 GameManager.instance.IncreaseStacksCompletedCounter();
             }
+            //card.transform.position = cardStack.transform.position;
+            MoveCardAtPosition(card.transform, cardStack.transform);
         }
     }
 
@@ -104,16 +106,17 @@ public class CardsManager : MonoBehaviour
             {
                 GameObject card = deck.Pop();
                 var cardComp = card.GetComponent<Card>();
-                card.transform.position = drawSlot.position;
+                //card.transform.position = drawSlot.position;
                 cardComp.SetLastSlot(drawSlot);
                 cardComp.FlipCard();
-                if(drawnCards.Count > 0)
+                if (drawnCards.Count > 0)
                 {
                     drawnCards.Peek().GetComponent<BoxCollider2D>().enabled = false;
                 }
                 drawnCards.Push(card);
                 drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Count;
-                
+                MoveCardAtPosition(card.transform, drawSlot);
+
                 // Registra la pesca dal mazzo nell'history solamente se non stiamo effettuando l'undo del reset del deck
                 if(!HistoryManager.instance.isUndoResetDeck)
                 {
@@ -124,7 +127,8 @@ public class CardsManager : MonoBehaviour
             else
             {
                 // Se le carte nel deck sono terminate, posso rimetterle al posto e ripescarle
-                ResetDeck();
+                isResettingDeck = true;
+                StartCoroutine(ResetDeck());
             }
 
             // Incrementare il numero di mosse solamente se non si sta facendo l'undo del reset del deck
@@ -139,36 +143,42 @@ public class CardsManager : MonoBehaviour
     public void MoveCardToDeck(GameObject card)
     {
         deck.Push(card);
-        card.transform.position = deckSlot.position;
+        //card.transform.position = deckSlot.position;
         card.GetComponent<Card>().CoverCard();
         deck.Peek().GetComponent<SpriteRenderer>().sortingOrder = deck.Count;
+        MoveCardAtPosition(card.transform, deckSlot);
     }
 
     // Rimetti a posto tutte le carte pescate
-    void ResetDeck()
+    IEnumerator ResetDeck()
     {
         if(!isSettingGame)
         {
             while(drawnCards.Count > 0)
             {
                 GameObject card = drawnCards.Pop();
-                card.transform.position = deckSlot.transform.position;
+                //card.transform.position = deckSlot.transform.position;
                 card.GetComponent<Card>().CoverCard();
                 card.GetComponent<Card>().SetLastSlot(null);
                 deck.Push(card);
                 deck.Peek().GetComponent<SpriteRenderer>().sortingOrder = deck.Count;
+                MoveCardAtPosition(card.transform, deckSlot.transform);
+                yield return new WaitForSeconds(timeNextDraw);
             }
             // Register reset of deck to history
             HistoryManager.instance.RegisterMoveToHistory(null, null, false, false, true, null, null);
+            isResettingDeck = false;
         }
     }
 
-    public void ResetDrawStack()
+    public IEnumerator ResetDrawStack()
     {
         while(deck.Count > 0)
         {
             DrawACardFromDeck();
+            yield return new WaitForSeconds(timeNextDraw);
         }
+        HistoryManager.instance.isUndoResetDeck = false;
     }
 
     public void PutAboveDranwStack(GameObject card)
@@ -190,7 +200,7 @@ public class CardsManager : MonoBehaviour
                 drawnCards.Pop();
                 if(drawnCards.Count >0 )
                 {
-                    drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Count;
+                    //drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Count;
                     drawnCards.Peek().GetComponent<BoxCollider2D>().enabled = true;
                 }
             }
@@ -207,7 +217,7 @@ public class CardsManager : MonoBehaviour
         Vector2 newPos = column.position;
         if(column.tag.Equals("Card"))
         {
-            newPos = new Vector2(newPos.x, newPos.y - 0.3f);
+            newPos = new Vector2(newPos.x, newPos.y - offSet);
         }
         timer = 0;
         while(timer < timeToMoveCard)
@@ -216,10 +226,7 @@ public class CardsManager : MonoBehaviour
             card.position = Vector2.Lerp(card.position, newPos, timer / timeToMoveCard);
             yield return null;
         }
-        //transform.position = column.position;
-        var cardComp = card.GetComponent<Card>();
-        cardComp.SetLastSlot(column);
-        cardComp.PutAboveLastSlot();
+        
         yield return null;
     }
 
@@ -229,7 +236,7 @@ public class CardsManager : MonoBehaviour
         {
             for (int j = i; j < columns.Count; j++)
             {
-                yield return new WaitForSeconds(timeNextDraw);
+                yield return new WaitForSeconds(timeNextDrawInit);
                 Transform columnTransform;
                 if(i == 0)
                 {
@@ -246,7 +253,13 @@ public class CardsManager : MonoBehaviour
                     card.GetComponent<Card>().FlipCard();
                     //card.GetComponent<BoxCollider2D>().enabled = true;
                 }
+                //transform.position = column.position;
+                var cardComp = card.GetComponent<Card>();
+                cardComp.SetLastSlot(columnTransform);
+                cardComp.PutAboveLastSlot();
+
                 MoveCardAtPosition(card.transform, columnTransform);
+
                 // Possibile soluzione per HintManager
                 //card.transform.parent = columnTransform;
                 lastSlotInColumns[j] = card.transform;

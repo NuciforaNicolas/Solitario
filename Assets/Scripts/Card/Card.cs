@@ -135,12 +135,12 @@ public class Card : MonoBehaviour
 
     public void MoveCardToLastSlot()
     {
-        Vector2 newPos = lastSlot.position;
+        //Vector2 newPos = lastSlot.position;
         transform.parent = lastSlot;
         // Setta la nuova posizione della carta. Se deve essere posizionata al di sopra di un'altra carta, abbassala di un certo offset
         if (lastSlot.tag.Equals("Card"))
         {
-            newPos = new Vector3(lastSlot.position.x, lastSlot.position.y - offset);
+            //newPos = new Vector3(lastSlot.position.x, lastSlot.position.y - offset);
 
             // Incrementa il punteggio se la carta è stata spostata dal drawDeck ad una colonna
             if (increasePoint)
@@ -162,8 +162,6 @@ public class Card : MonoBehaviour
             increasePoint = true;
             CardsManager.instance.PutAboveDranwStack(gameObject);
         }
-        // Setta la posizione dell'ultimo slot trovato
-        transform.position = newPos;
         PutAboveLastSlot();
         // Se una carta coperta si trova libera dopo aver posizionato la carta selezionata, girala
         if (cardToFlip != null)
@@ -171,6 +169,9 @@ public class Card : MonoBehaviour
             cardToFlip.GetComponent<Card>().FlipCard();
             cardToFlip = null;
         }
+        // Setta la posizione dell'ultimo slot trovato
+        //transform.position = newPos;
+        CardsManager.instance.MoveCardAtPosition(transform, lastSlot);
     }
 
     // Posiziona la carta selezionata al di sopra di un'altra carta scoperta incrementando il sortingOrder
