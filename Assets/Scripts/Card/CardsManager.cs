@@ -71,7 +71,7 @@ public class CardsManager : MonoBehaviour
         if ((cardStack.GetComponent<Stack>().stackType.ToString() == cardComp.suit.ToString()) && ((stackCounters[cardStack.name] + 1) == cardComp.number))
         {
             // Registra lo stato corrente della carta prima di inserirla nello stack
-            HistoryManager.instance.RegisterMoveToHistory(card.transform, cardComp.GetLastSlot(), false, true, false, (cardComp.GetLastSlot().GetComponent<Card>().isCovered ? cardComp.GetLastSlot().GetComponent<Card>() : null) , cardStack.name);
+            HistoryManager.instance.RegisterMoveToHistory(card.transform, cardComp.GetLastSlot(), false, true, false, (cardComp.GetLastSlot().tag.Equals("Card") && cardComp.GetLastSlot().GetComponent<Card>().isCovered ? cardComp.GetLastSlot().GetComponent<Card>() : null) , cardStack.name);
 
             //cardStacks[cardStack.name].Add(card);
             stackCounters[cardStack.name]++;
@@ -197,7 +197,12 @@ public class CardsManager : MonoBehaviour
         }
     }
 
-    IEnumerator MoveCardAtPosition(Transform card, Transform column)
+    public void MoveCardAtPosition(Transform card, Transform column)
+    {
+        StartCoroutine(MoveCardAtPositionCoroutine(card, column));
+    }
+
+    IEnumerator MoveCardAtPositionCoroutine(Transform card, Transform column)
     {
         Vector2 newPos = column.position;
         if(column.tag.Equals("Card"))
@@ -241,7 +246,7 @@ public class CardsManager : MonoBehaviour
                     card.GetComponent<Card>().FlipCard();
                     //card.GetComponent<BoxCollider2D>().enabled = true;
                 }
-                StartCoroutine(MoveCardAtPosition(card.transform, columnTransform));
+                MoveCardAtPosition(card.transform, columnTransform);
                 // Possibile soluzione per HintManager
                 //card.transform.parent = columnTransform;
                 lastSlotInColumns[j] = card.transform;

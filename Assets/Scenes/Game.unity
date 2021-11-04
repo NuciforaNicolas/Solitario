@@ -3791,7 +3791,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.888889
+  orthographic size: 5.5
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -3932,7 +3932,7 @@ PrefabInstance:
       objectReference: {fileID: 1022082282}
     - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
       propertyPath: timeNextDraw
-      value: 0.2
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
       propertyPath: timeToMoveCard
