@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3271799973110923410}
   - component: {fileID: -8441016493442406003}
   - component: {fileID: -7885202201454608134}
+  - component: {fileID: -1065989047821066232}
   m_Layer: 0
   m_Name: 6_of_diamonds
   m_TagString: Card
@@ -108,6 +109,7 @@ MonoBehaviour:
   cardToFlip: {fileID: 0}
   drawnCardLayerName: 
   cardLayerName: 
+  anim: {fileID: 0}
   faceSprite: {fileID: 21300000, guid: 14f70a83ed931aa4b9043808d9b2e92c, type: 3}
   backSprite: {fileID: 21300000, guid: 5833cb7dc19e62d4087ad74681c4db68, type: 3}
   isCovered: 0
@@ -160,3 +162,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!95 &-1065989047821066232
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6516957652833451947}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1b05bd8f089cf2346b6bee3d1d937974, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

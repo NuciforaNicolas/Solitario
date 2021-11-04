@@ -3870,10 +3870,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cards Manager
       objectReference: {fileID: 0}
-    - target: {fileID: 1571408958653907236, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1571408958653907242, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -3919,14 +3915,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
-      propertyPath: offSet
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
-      propertyPath: offset
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
       propertyPath: deckSlot
       value: 
       objectReference: {fileID: 1127244294}
@@ -3934,26 +3922,6 @@ PrefabInstance:
       propertyPath: drawSlot
       value: 
       objectReference: {fileID: 1022082282}
-    - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
-      propertyPath: timeNextDraw
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
-      propertyPath: timeToMoveCard
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
-      propertyPath: maxCardsPerStack
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
-      propertyPath: timeNextDrawInit
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
-      propertyPath: columns.Array.size
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 1571408958653907243, guid: 73d17f290702c6543b3f411de9d45aeb, type: 3}
       propertyPath: columns.Array.data[0]
       value: 

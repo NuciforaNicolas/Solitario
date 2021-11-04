@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2833693928504537370}
   - component: {fileID: 4801318910173943014}
   - component: {fileID: -3467587773376119767}
+  - component: {fileID: -4519278106618946216}
   m_Layer: 0
   m_Name: 8_of_spades
   m_TagString: Card
@@ -108,6 +109,7 @@ MonoBehaviour:
   cardToFlip: {fileID: 0}
   drawnCardLayerName: 
   cardLayerName: 
+  anim: {fileID: 0}
   faceSprite: {fileID: 21300000, guid: 236fd27c1667d2a4ea7ba56f045ced2c, type: 3}
   backSprite: {fileID: 21300000, guid: 5833cb7dc19e62d4087ad74681c4db68, type: 3}
   isCovered: 0
@@ -160,3 +162,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!95 &-4519278106618946216
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4273933066635926060}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d8ae18144d3b3a54b952855a7e83b8c2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

@@ -28,14 +28,17 @@ public class Card : MonoBehaviour
     [SerializeField] string drawnCardLayerName;
     [SerializeField] string cardLayerName;
 
+    [SerializeField] Animator anim;
+
     [SerializeField] Sprite faceSprite, backSprite;
 
     public bool isCovered, canIncreasePoint, increasePoint;
 
-    private void Awake()
+    private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
+        anim = GetComponent<Animator>();
         // Card is covered at the beginning
         spriteRenderer.sprite = backSprite;
         isCovered = true;
@@ -256,6 +259,8 @@ public class Card : MonoBehaviour
         {
             GameManager.instance.IncreasePoints(5);
         }
+        // avvia animazione
+        anim.SetTrigger("flip");
     }
 
     // Copri la carta
@@ -264,6 +269,8 @@ public class Card : MonoBehaviour
         boxCollider.enabled = false;
         spriteRenderer.sprite = backSprite;
         isCovered = true;
+        // avvia animazione
+        anim.SetTrigger("cover");
     }
 
     // Posiziona la carta nello stack dei semi

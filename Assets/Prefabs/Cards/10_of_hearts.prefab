@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1455170801750321648}
   - component: {fileID: -5797314053679208612}
   - component: {fileID: -3794915148820301410}
+  - component: {fileID: -8653671040095862385}
   m_Layer: 0
   m_Name: 10_of_hearts
   m_TagString: Card
@@ -108,6 +109,7 @@ MonoBehaviour:
   cardToFlip: {fileID: 0}
   drawnCardLayerName: 
   cardLayerName: 
+  anim: {fileID: 0}
   faceSprite: {fileID: 21300000, guid: 44cd58a8c5d4be6429e88c2ee7211a31, type: 3}
   backSprite: {fileID: 21300000, guid: 5833cb7dc19e62d4087ad74681c4db68, type: 3}
   isCovered: 0
@@ -160,3 +162,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!95 &-8653671040095862385
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1994914971462219714}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a773ef973fefbb94bac5d0fade6cd633, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
