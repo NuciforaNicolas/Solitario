@@ -7,7 +7,7 @@ public class Info
     public Transform card, lastPos;
     public Card cardToCover;
     public string stackName;
-    public bool fromDeck, fromSuitStack;
+    public bool fromDeck, fromSuitStack, resetDeck;
 };
 
 public class HistoryManager : MonoBehaviour
@@ -15,6 +15,7 @@ public class HistoryManager : MonoBehaviour
     Stack<Info> history;
 
     public static HistoryManager instance;
+    public bool isUndoResetDeck { get; set; }
 
     private void Awake()
     {
@@ -26,7 +27,7 @@ public class HistoryManager : MonoBehaviour
         history = new Stack<Info>();
     }
 
-    public void RegisterMoveToHistory(Transform card, Transform lastPos, bool fromDeck, bool fromSuitStack, Card cardToCover, string stackName)
+    public void RegisterMoveToHistory(Transform card, Transform lastPos, bool fromDeck, bool fromSuitStack, bool resetDeck, Card cardToCover, string stackName)
     {
         Info newInfo = new Info();
         newInfo.card = card;
@@ -35,6 +36,7 @@ public class HistoryManager : MonoBehaviour
         newInfo.fromSuitStack = fromSuitStack;
         newInfo.cardToCover = cardToCover;
         newInfo.stackName = stackName;
+        newInfo.resetDeck = resetDeck;
 
         history.Push(newInfo);
     }
@@ -43,9 +45,10 @@ public class HistoryManager : MonoBehaviour
     {
         if(history.Count > 0)
         {
+
             Info lastInfo = history.Pop();
             // La carta è stata spostata da colonna a colonna o dal drawStack? Riportala indietro
-            if (!lastInfo.fromDeck /*&& !lastInfo.fromSuitStack*/)
+            if (!lastInfo.fromDeck && !lastInfo.resetDeck)
             {
                 lastInfo.card.GetComponent<Card>().SetLastSlot(lastInfo.lastPos);
                 lastInfo.card.GetComponent<Card>().MoveCardToLastSlot();
@@ -67,7 +70,18 @@ public class HistoryManager : MonoBehaviour
                 CardsManager.instance.DrawACardFromDrawnDeck();
                 CardsManager.instance.MoveCardToDeck(lastInfo.card.gameObject);
             }
+            else if(lastInfo.resetDeck)
+            {
+                UndoResetDeck();
+            }
             GameManager.instance.IncreaseMoves();
         }
+    }
+
+    void UndoResetDeck()
+    {
+        isUndoResetDeck = true;
+        CardsManager.instance.ResetDrawStack();
+        isUndoResetDeck = false;
     }
 }

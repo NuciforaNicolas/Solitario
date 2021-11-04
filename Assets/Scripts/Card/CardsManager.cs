@@ -71,7 +71,7 @@ public class CardsManager : MonoBehaviour
         if ((cardStack.GetComponent<Stack>().stackType.ToString() == cardComp.suit.ToString()) && ((stackCounters[cardStack.name] + 1) == cardComp.number))
         {
             // Registra lo stato corrente della carta prima di inserirla nello stack
-            HistoryManager.instance.RegisterMoveToHistory(card.transform, cardComp.GetLastSlot(), false, true, cardComp.GetLastSlot().GetComponent<Card>(), cardStack.name);
+            HistoryManager.instance.RegisterMoveToHistory(card.transform, cardComp.GetLastSlot(), false, true, false, cardComp.GetLastSlot().GetComponent<Card>(), cardStack.name);
 
             //cardStacks[cardStack.name].Add(card);
             stackCounters[cardStack.name]++;
@@ -96,7 +96,7 @@ public class CardsManager : MonoBehaviour
         }
     }
 
-    void DrawACardFromDeck()
+    public void DrawACardFromDeck()
     {
         if(!isSettingGame)
         {
@@ -113,8 +113,13 @@ public class CardsManager : MonoBehaviour
                 }
                 drawnCards.Push(card);
                 drawnCards.Peek().GetComponent<SpriteRenderer>().sortingOrder = drawnCards.Count;
-                // Registra la pesca dal mazzo nell'history
-                HistoryManager.instance.RegisterMoveToHistory(card.transform, deckSlot, true, false, null, null);
+                
+                // Registra la pesca dal mazzo nell'history solamente se non stiamo effettuando l'undo del reset del deck
+                if(!HistoryManager.instance.isUndoResetDeck)
+                {
+                    // Registra la pesca dal mazzo nell'history
+                    HistoryManager.instance.RegisterMoveToHistory(card.transform, deckSlot, true, false, false, null, null);
+                }
             }
             else
             {
@@ -148,6 +153,16 @@ public class CardsManager : MonoBehaviour
                 deck.Push(card);
                 deck.Peek().GetComponent<SpriteRenderer>().sortingOrder = deck.Count;
             }
+            // Register reset of deck to history
+            HistoryManager.instance.RegisterMoveToHistory(null, null, false, false, true, null, null);
+        }
+    }
+
+    public void ResetDrawStack()
+    {
+        while(deck.Count > 0)
+        {
+            DrawACardFromDeck();
         }
     }
 
@@ -229,5 +244,10 @@ public class CardsManager : MonoBehaviour
         }
         isSettingGame = false;
         yield return null;
+    }
+
+    public Stack<GameObject> GetDeck()
+    {
+        return deck;
     }
 }
