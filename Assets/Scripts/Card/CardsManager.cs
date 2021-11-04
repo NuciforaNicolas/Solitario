@@ -71,7 +71,7 @@ public class CardsManager : MonoBehaviour
         if ((cardStack.GetComponent<Stack>().stackType.ToString() == cardComp.suit.ToString()) && ((stackCounters[cardStack.name] + 1) == cardComp.number))
         {
             // Registra lo stato corrente della carta prima di inserirla nello stack
-            HistoryManager.instance.RegisterMoveToHistory(card.transform, cardComp.GetLastSlot(), false, true, false, cardComp.GetLastSlot().GetComponent<Card>(), cardStack.name);
+            HistoryManager.instance.RegisterMoveToHistory(card.transform, cardComp.GetLastSlot(), false, true, false, (cardComp.GetLastSlot().GetComponent<Card>().isCovered ? cardComp.GetLastSlot().GetComponent<Card>() : null) , cardStack.name);
 
             //cardStacks[cardStack.name].Add(card);
             stackCounters[cardStack.name]++;

@@ -111,7 +111,8 @@ MonoBehaviour:
   faceSprite: {fileID: 21300000, guid: 19313354e2784704e8385cefd50a5040, type: 3}
   backSprite: {fileID: 21300000, guid: 5833cb7dc19e62d4087ad74681c4db68, type: 3}
   isCovered: 0
-  hasCardAbove: 0
+  canIncreasePoint: 0
+  increasePoint: 0
 --- !u!61 &-337680475093235312
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -136,7 +137,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 1}
+  m_Size: {x: 0.65, y: 1}
   m_EdgeRadius: 0
 --- !u!50 &-6087262549344967228
 Rigidbody2D:
