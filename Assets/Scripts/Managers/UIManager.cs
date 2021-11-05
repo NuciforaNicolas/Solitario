@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] CanvasGroup mainMenu, instructions, credits, victory;
+    [SerializeField] CanvasGroup mainMenu, instructions, credits, victory, options;
+    [SerializeField] Button mainmenu, undo, opt;
     [SerializeField] Text points, moves, timer;
     public static UIManager instance;
 
@@ -79,6 +80,34 @@ public class UIManager : MonoBehaviour
             moves.text = GameManager.instance.GetMoves().ToString();
             points.text = GameManager.instance.GetPoints().ToString();
             timer.text = GameManager.instance.GetTimer();
+        }
+    }
+
+    public void OpenOptions()
+    {
+        if (options != null)
+        {
+            options.alpha = 1;
+            options.interactable = true;
+            options.blocksRaycasts = true;
+            mainmenu.interactable = false;
+            opt.interactable = false;
+            undo.interactable = false;
+            Time.timeScale = 0;
+        }
+    }
+
+    public void CloseOptions()
+    {
+        if (options != null)
+        {
+            options.alpha = 0;
+            options.interactable = false;
+            options.blocksRaycasts = false;
+            mainmenu.interactable = true;
+            opt.interactable = true;
+            undo.interactable = true;
+            Time.timeScale = 1;
         }
     }
 }

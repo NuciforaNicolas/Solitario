@@ -7,16 +7,15 @@ public class SoundManager : MonoBehaviour
 {
     [SerializeField] AudioClip clip;
     [SerializeField] AudioSource source;
-    [SerializeField] Sprite mute, unMute;
-    [SerializeField] Button soundButton;
+    [SerializeField] Image toggle;
     bool isPlaying;
 
     private void Start()
     {
-        if (clip != null && source != null && soundButton != null)
+        if (clip != null && source != null && toggle != null)
         {
             isPlaying = true;
-            soundButton.image.sprite = unMute;
+            toggle.enabled = true;
             source.clip = clip;
             source.Play();
         }
@@ -37,14 +36,14 @@ public class SoundManager : MonoBehaviour
     public void Mute()
     {
         source.mute = true;
-        soundButton.image.sprite = mute;
+        toggle.enabled = false;
         isPlaying = false;
     }
 
     public void UnMute()
     {
         source.mute = false;
-        soundButton.image.sprite = unMute;
+        toggle.enabled = true;
         isPlaying = true;
     }
 }
